@@ -6,12 +6,21 @@ import { highlight, languages } from "prismjs/components/prism-core";
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism.css";
+import axios from "axios";
 
 export default function Home() {
   const [code, setCode] = useState(`function add(a, b) {\n  return a + b;\n}`);
+  const [output, setOutput] = useState("");
 
   const runCodeClickHandler = () => {
-    console.log("code: ", code);
+    axios
+      .post("http://localhost:8000/code", {
+        code: code,
+      })
+      .then((res) => {
+        console.log("res: ", res.data);
+        setOutput(res.data.data);
+      });
   };
 
   return (
@@ -34,6 +43,10 @@ export default function Home() {
           }}
         />
         <button onClick={runCodeClickHandler}>Run Code</button>
+        <div>
+          <h3>Output</h3>
+          <div>{output}</div>
+        </div>
       </main>
     </>
   );
