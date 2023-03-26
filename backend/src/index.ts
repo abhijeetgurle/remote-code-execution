@@ -24,7 +24,6 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.post("/code", async (req: Request, res: Response) => {
-  console.log(req.body);
   try {
     const code = req.body.code;
     const filename = uuidv4();
@@ -50,7 +49,6 @@ app.post("/code", async (req: Request, res: Response) => {
         return;
       }
 
-      console.log(`stdout: ${stdout}`);
       res.json({
         status: "SUCCESS",
         data: stdout,
