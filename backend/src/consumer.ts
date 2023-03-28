@@ -1,13 +1,11 @@
 import amqp from "amqplib";
 
 import fs from "fs";
-import { v4 as uuidv4 } from "uuid";
 import { exec } from "child_process";
 
 const queueName = "codeSubmitted";
 
-const executeCode = (code: string) => {
-  const filename = uuidv4();
+const executeCode = (code: string, filename: string) => {
   fs.writeFileSync(`codeFiles/${filename}.js`, code);
   exec(`node codeFiles/${filename}.js`, (error, stdout, stderr) => {
     if (error) {
@@ -30,9 +28,9 @@ async function connect() {
     await channel.assertQueue(queueName);
     channel.consume(queueName, (message) => {
       if (message) {
-        const code = message.content.toString();
-        console.log(`Received message: ${code}`);
-        executeCode(code);
+        console.log(message.content.toString());
+        const parsedMessage = JSON.parse(message.content.toString());
+        executeCode(parsedMessage.code, parsedMessage.id);
         // channel.ack(message);
       }
     });

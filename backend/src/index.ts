@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import { v4 as uuidv4 } from "uuid";
 
 import { channel, queueName } from "./rabbitmq";
 
@@ -25,7 +26,14 @@ app.get("/", (req: Request, res: Response) => {
 app.post("/code", async (req: Request, res: Response) => {
   try {
     const code = req.body.code;
-    channel.sendToQueue(queueName, Buffer.from(code));
+    const id = uuidv4();
+    const message = {
+      id,
+      code,
+    };
+
+    channel.sendToQueue(queueName, Buffer.from(JSON.stringify(message)));
+
     return res.json({
       status: "SUCCESS",
     });
