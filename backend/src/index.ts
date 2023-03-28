@@ -1,9 +1,10 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
-import { exec } from "child_process";
+
+import { channel, queueName } from "./rabbitmq";
+import { redisClient } from "./redis";
 
 dotenv.config();
 
@@ -26,37 +27,38 @@ app.get("/", (req: Request, res: Response) => {
 app.post("/code", async (req: Request, res: Response) => {
   try {
     const code = req.body.code;
-    const filename = uuidv4();
+    const id = uuidv4();
+    const message = {
+      id,
+      code,
+    };
 
-    fs.writeFileSync(`codeFiles/${filename}.js`, code);
+    channel.sendToQueue(queueName, Buffer.from(JSON.stringify(message)));
 
-    exec(`node codeFiles/${filename}.js`, (error, stdout, stderr) => {
-      if (error) {
-        console.log(`error: ${error.message}`);
-        res.json({
-          status: "ERROR",
-          error: error,
-        });
-        return;
-      }
-
-      if (stderr) {
-        console.log(`stderr: ${stderr}`);
-        res.json({
-          status: "ERROR",
-          error: error,
-        });
-        return;
-      }
-
-      res.json({
-        status: "SUCCESS",
-        data: stdout,
-      });
-      return;
+    return res.json({
+      status: "SUCCESS",
+      data: {
+        jobId: id,
+      },
     });
   } catch (err) {
     console.error(err);
+  }
+});
+
+app.get("/job/:jobId", async (req: Request, res: Response) => {
+  try {
+    const msg: any = await redisClient.get(req.params.jobId);
+
+    return res.json({
+      status: "SUCCESS",
+      data: JSON.parse(msg),
+    });
+  } catch (err) {
+    console.error(err);
+    return res.json({
+      status: "ERROR",
+    });
   }
 });
 
