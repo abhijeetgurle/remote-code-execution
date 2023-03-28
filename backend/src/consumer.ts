@@ -42,7 +42,7 @@ async function connect() {
 
         redisClient.set(parsedMessage.id, "PROCESSING");
         executeCode(parsedMessage.code, parsedMessage.id);
-        // channel.ack(message);
+        channel.ack(message);
       }
     });
     console.log(`Waiting for messages...`);
