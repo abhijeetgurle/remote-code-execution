@@ -26,10 +26,13 @@ export default function Home() {
 
   useEffect(() => {
     if (jobId) {
-      setInterval(() => {
+      const interval = setInterval(() => {
         axios.get(`http://localhost:8000/job/${jobId}`).then((res) => {
           console.log("job status: ", res.data.data);
-          setOutput(res.data.data);
+          if (res.data.data.status !== "PROCESSING") {
+            clearInterval(interval);
+          }
+          setOutput(res.data.data.jobOutput);
         });
       }, 3000);
     }

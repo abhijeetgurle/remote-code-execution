@@ -48,10 +48,11 @@ app.post("/code", async (req: Request, res: Response) => {
 
 app.get("/job/:jobId", async (req: Request, res: Response) => {
   try {
-    const msg = await redisClient.get(req.params.jobId);
+    const msg: any = await redisClient.get(req.params.jobId);
+
     return res.json({
       status: "SUCCESS",
-      data: msg,
+      data: JSON.parse(msg),
     });
   } catch (err) {
     console.error(err);

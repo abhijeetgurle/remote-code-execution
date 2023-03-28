@@ -7,24 +7,34 @@ import { redisClient } from "./redis";
 const queueName = "codeSubmitted";
 
 const executeCode = (code: string, filename: string) => {
-  redisClient.set(filename, "EXECUTING");
-
   fs.writeFileSync(`codeFiles/${filename}.js`, code);
+
   exec(`node codeFiles/${filename}.js`, (error, stdout, stderr) => {
     if (error) {
       console.log(`error: ${error.message}`);
-      redisClient.set(filename, `ERROR: ${error.message}`);
+      const msg = {
+        jobStatus: "ERROR",
+        jobOutput: error.message,
+      };
+      redisClient.set(filename, JSON.stringify(msg));
       return;
     }
 
     if (stderr) {
       console.log(`stderr: ${stderr}`);
-      redisClient.set(filename, `ERROR: ${stderr}`);
+      const msg = {
+        jobStatus: "ERROR",
+        jobOutput: stderr,
+      };
+      redisClient.set(filename, JSON.stringify(msg));
       return;
     }
 
-    console.log("stdout: ", stdout);
-    redisClient.set(filename, `Successfully executed: ${stdout}`);
+    const msg = {
+      jobStatus: "SUCCESS",
+      jobOutput: stdout,
+    };
+    redisClient.set(filename, JSON.stringify(msg));
 
     return;
   });
@@ -40,7 +50,12 @@ async function connect() {
         console.log(message.content.toString());
         const parsedMessage = JSON.parse(message.content.toString());
 
-        redisClient.set(parsedMessage.id, "PROCESSING");
+        const msg = {
+          jobStatus: "PROCESSING",
+          jobOutput: "",
+        };
+        redisClient.set(parsedMessage.id, JSON.stringify(msg));
+
         executeCode(parsedMessage.code, parsedMessage.id);
         channel.ack(message);
       }
