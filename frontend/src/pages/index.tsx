@@ -29,7 +29,7 @@ export default function Home() {
       const interval = setInterval(() => {
         axios.get(`http://localhost:8000/job/${jobId}`).then((res) => {
           console.log("job status: ", res.data.data);
-          if (res.data.data.status !== "PROCESSING") {
+          if (res.data.data.jobStatus !== "PROCESSING") {
             clearInterval(interval);
           }
           setOutput(res.data.data.jobOutput);

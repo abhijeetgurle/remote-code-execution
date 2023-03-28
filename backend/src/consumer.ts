@@ -52,7 +52,7 @@ async function connect() {
 
         const msg = {
           jobStatus: "PROCESSING",
-          jobOutput: "",
+          jobOutput: "PROCESSING",
         };
         redisClient.set(parsedMessage.id, JSON.stringify(msg));
 
