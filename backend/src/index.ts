@@ -4,6 +4,7 @@ import cors from "cors";
 import { v4 as uuidv4 } from "uuid";
 
 import { channel, queueName } from "./rabbitmq";
+import { redisClient } from "./redis";
 
 dotenv.config();
 
@@ -36,9 +37,27 @@ app.post("/code", async (req: Request, res: Response) => {
 
     return res.json({
       status: "SUCCESS",
+      data: {
+        jobId: id,
+      },
     });
   } catch (err) {
     console.error(err);
+  }
+});
+
+app.get("/job/:jobId", async (req: Request, res: Response) => {
+  try {
+    const msg = await redisClient.get(req.params.jobId);
+    return res.json({
+      status: "SUCCESS",
+      data: msg,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.json({
+      status: "ERROR",
+    });
   }
 });
 

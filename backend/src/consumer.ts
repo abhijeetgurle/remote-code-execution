@@ -2,21 +2,30 @@ import amqp from "amqplib";
 
 import fs from "fs";
 import { exec } from "child_process";
+import { redisClient } from "./redis";
 
 const queueName = "codeSubmitted";
 
 const executeCode = (code: string, filename: string) => {
+  redisClient.set(filename, "EXECUTING");
+
   fs.writeFileSync(`codeFiles/${filename}.js`, code);
   exec(`node codeFiles/${filename}.js`, (error, stdout, stderr) => {
     if (error) {
       console.log(`error: ${error.message}`);
+      redisClient.set(filename, `ERROR: ${error.message}`);
       return;
     }
+
     if (stderr) {
       console.log(`stderr: ${stderr}`);
+      redisClient.set(filename, `ERROR: ${stderr}`);
       return;
     }
+
     console.log("stdout: ", stdout);
+    redisClient.set(filename, `Successfully executed: ${stdout}`);
+
     return;
   });
 };
@@ -30,6 +39,8 @@ async function connect() {
       if (message) {
         console.log(message.content.toString());
         const parsedMessage = JSON.parse(message.content.toString());
+
+        redisClient.set(parsedMessage.id, "PROCESSING");
         executeCode(parsedMessage.code, parsedMessage.id);
         // channel.ack(message);
       }
@@ -39,4 +50,5 @@ async function connect() {
     console.error(ex);
   }
 }
+
 connect();

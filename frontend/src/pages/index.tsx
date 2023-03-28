@@ -1,7 +1,7 @@
 import Head from "next/head";
 import styles from "@/styles/Home.module.css";
 import Editor from "react-simple-code-editor";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { highlight, languages } from "prismjs/components/prism-core";
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
@@ -11,6 +11,7 @@ import axios from "axios";
 export default function Home() {
   const [code, setCode] = useState(`function add(a, b) {\n  return a + b;\n}`);
   const [output, setOutput] = useState("");
+  const [jobId, setJobId] = useState("");
 
   const runCodeClickHandler = () => {
     axios
@@ -19,9 +20,20 @@ export default function Home() {
       })
       .then((res) => {
         console.log("res: ", res.data);
-        setOutput(res.data.data);
+        setJobId(res.data.data.jobId);
       });
   };
+
+  useEffect(() => {
+    if (jobId) {
+      setInterval(() => {
+        axios.get(`http://localhost:8000/job/${jobId}`).then((res) => {
+          console.log("job status: ", res.data.data);
+          setOutput(res.data.data);
+        });
+      }, 3000);
+    }
+  }, [jobId]);
 
   return (
     <>
