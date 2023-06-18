@@ -12,6 +12,7 @@ export default function Home() {
   const [code, setCode] = useState(`function add(a, b) {\n  return a + b;\n}`);
   const [output, setOutput] = useState("");
   const [jobId, setJobId] = useState("");
+  const [jobStatus, setJobStatus] = useState("");
 
   const runCodeClickHandler = () => {
     axios
@@ -19,8 +20,8 @@ export default function Home() {
         code: code,
       })
       .then((res) => {
-        console.log("res: ", res.data);
         setJobId(res.data.data.jobId);
+        setJobStatus("PROCESSING");
       });
   };
 
@@ -28,15 +29,26 @@ export default function Home() {
     if (jobId) {
       const interval = setInterval(() => {
         axios.get(`http://localhost:8000/job/${jobId}`).then((res) => {
-          console.log("job status: ", res.data.data);
+          setJobStatus(res.data.data.jobStatus);
           if (res.data.data.jobStatus !== "PROCESSING") {
             clearInterval(interval);
           }
+          setJobStatus(res.data.data.jobStatus);
           setOutput(res.data.data.jobOutput);
         });
       }, 3000);
     }
   }, [jobId]);
+
+  const getMessageToDisplay = () => {
+    if (jobStatus === "SUCCESS") {
+      return "Congratulations!!! Your code is running on all test cases";
+    } else if (jobStatus === "MISMATCHED") {
+      return "Test cases are failing! Please check your code";
+    } else if (jobStatus === "PROCESSING") {
+      return "Code Is Running";
+    }
+  };
 
   return (
     <>
@@ -60,7 +72,7 @@ export default function Home() {
         <button onClick={runCodeClickHandler}>Run Code</button>
         <div>
           <h3>Output</h3>
-          <div>{output}</div>
+          <div>{getMessageToDisplay()}</div>
         </div>
       </main>
     </>
