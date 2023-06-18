@@ -3,11 +3,14 @@ import amqp from "amqplib";
 import fs from "fs";
 import { exec } from "child_process";
 import { redisClient } from "./redis";
+import tests from "./tests";
 
 const queueName = "codeSubmitted";
 
 const executeCode = (code: string, filename: string) => {
-  fs.writeFileSync(`codeFiles/${filename}.js`, code);
+  const finalCode =
+    code + "\n" + `console.log(add(${tests.add[0].a}, ${tests.add[0].b}))`;
+  fs.writeFileSync(`codeFiles/${filename}.js`, finalCode);
 
   exec(`node codeFiles/${filename}.js`, (error, stdout, stderr) => {
     if (error) {
@@ -30,11 +33,21 @@ const executeCode = (code: string, filename: string) => {
       return;
     }
 
-    const msg = {
-      jobStatus: "SUCCESS",
-      jobOutput: stdout,
-    };
-    redisClient.set(filename, JSON.stringify(msg));
+    console.log("stdout: ", stdout);
+
+    if (Number(stdout) == tests.add[0].result) {
+      const msg = {
+        jobStatus: "SUCCESS",
+        jobOutput: stdout,
+      };
+      redisClient.set(filename, JSON.stringify(msg));
+    } else {
+      const msg = {
+        jobStatus: "MISMATCHED",
+        jobOutput: stdout,
+      };
+      redisClient.set(filename, JSON.stringify(msg));
+    }
 
     return;
   });
