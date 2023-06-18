@@ -7,9 +7,31 @@ import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism.css";
 import axios from "axios";
+import "antd/dist/reset.css";
+import { Button, Spin, Tabs } from "antd";
+import type { TabsProps } from "antd";
+
+const items: TabsProps["items"] = [
+  {
+    key: "1",
+    label: `Problem Statement`,
+    children: (
+      <div>
+        <h3>Add 2 Numbers</h3>
+        <div>
+          Write a code for adding 2 integer numbers. Complete the add function
+          given. The function accepts 2 parameters a & b as input & expects
+          their addition as the returned response.
+        </div>
+      </div>
+    ),
+  },
+];
 
 export default function Home() {
-  const [code, setCode] = useState(`function add(a, b) {\n  return a + b;\n}`);
+  const [code, setCode] = useState(
+    `function add(a, b) {\n // Write your code here... \n\n}`
+  );
   const [output, setOutput] = useState("");
   const [jobId, setJobId] = useState("");
   const [jobStatus, setJobStatus] = useState("");
@@ -38,7 +60,7 @@ export default function Home() {
       }, 3000);
     }
   }, [jobId]);
-            
+
   const getMessageToDisplay = () => {
     if (jobStatus === "SUCCESS") {
       return "Congratulations!!! Your code is running on all test cases";
@@ -58,20 +80,43 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        <Editor
-          value={code}
-          onValueChange={(code) => setCode(code)}
-          highlight={(code) => highlight(code, languages.js)}
-          padding={10}
-          style={{
-            fontFamily: '"Fira code", "Fira Mono", monospace',
-            fontSize: 12,
-          }}
-        />
-        <button onClick={runCodeClickHandler}>Run Code</button>
-        <div>
-          <h3>Output</h3>
-          <div>{getMessageToDisplay()}</div>
+        <div className={styles.problem}>
+          <Tabs defaultActiveKey="1" items={items} />
+        </div>
+        <div className={styles.code}>
+          <Editor
+            value={code}
+            onValueChange={(code) => setCode(code)}
+            highlight={(code) => highlight(code, languages.js)}
+            padding={10}
+            style={{
+              fontFamily: '"Fira code", "Fira Mono", monospace',
+              fontSize: 14,
+              width: "100%",
+              height: "70%",
+              border: "1px solid gray",
+              borderRadius: "5px",
+              backgroundColor: "black",
+              color: "white",
+            }}
+          />
+          <Button
+            type="primary"
+            className={styles.btn}
+            onClick={runCodeClickHandler}
+          >
+            Submit Code
+          </Button>
+          <div className={styles.output}>
+            <h3>Output</h3>
+            {jobStatus === "PROCESSING" ? (
+              <div className={styles.spinnerContainer}>
+                <Spin />
+              </div>
+            ) : (
+              <div>{getMessageToDisplay()}</div>
+            )}
+          </div>
         </div>
       </main>
     </>

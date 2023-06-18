@@ -1,0 +1,29 @@
+.main {
+    display: flex;
+    height: 100vh
+}
+
+.problem {
+    width: 100%;
+    padding: 20px;
+}
+
+.code {
+    width: 100%;
+    padding: 20px;
+    height: 100%
+}
+
+.btn {
+    margin-top: 10px;
+}
+
+.output {
+    margin-top: 20px;
+}
+
+.spinnerContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
