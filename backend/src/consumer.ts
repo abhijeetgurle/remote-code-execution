@@ -33,8 +33,6 @@ const executeCode = (code: string, filename: string) => {
       return;
     }
 
-    console.log("stdout: ", stdout);
-
     if (Number(stdout) == tests.add[0].result) {
       const msg = {
         jobStatus: "SUCCESS",

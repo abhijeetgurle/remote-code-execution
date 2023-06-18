@@ -33,13 +33,12 @@ export default function Home() {
           if (res.data.data.jobStatus !== "PROCESSING") {
             clearInterval(interval);
           }
-          setJobStatus(res.data.data.jobStatus);
           setOutput(res.data.data.jobOutput);
         });
       }, 3000);
     }
   }, [jobId]);
-
+            
   const getMessageToDisplay = () => {
     if (jobStatus === "SUCCESS") {
       return "Congratulations!!! Your code is running on all test cases";
