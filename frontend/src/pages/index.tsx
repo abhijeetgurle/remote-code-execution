@@ -117,7 +117,7 @@ export default function Home() {
           </Button>
           {jobStatus && (
             <div className={styles.output}>
-              <h3>Output</h3>
+              <p>Output</p>
               {jobStatus === "PROCESSING" ? (
                 <div className={styles.spinnerContainer}>
                   <Spin />
