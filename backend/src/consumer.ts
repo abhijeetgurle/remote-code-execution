@@ -9,7 +9,9 @@ const queueName = "codeSubmitted";
 
 const executeCode = (code: string, filename: string) => {
   const finalCode =
-    code + "\n" + `console.log(add(${tests.add[0].a}, ${tests.add[0].b}))`;
+    code +
+    "\n" +
+    `console.log(add(${(tests.add[0].params.a, tests.add[0].params.b)}}))`;
   fs.writeFileSync(`codeFiles/${filename}.js`, finalCode);
 
   exec(`node codeFiles/${filename}.js`, (error, stdout, stderr) => {
