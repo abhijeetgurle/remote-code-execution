@@ -7,11 +7,19 @@ import tests from "./tests";
 
 const queueName = "codeSubmitted";
 
+const getFinalCode = (code: string) => {
+  let finalCode = code;
+
+  for (const test of tests.add) {
+    finalCode +=
+      "\n" + `console.log(add(` + test.params.a + "," + test.params.b + "))";
+  }
+
+  return finalCode;
+};
+
 const executeCode = (code: string, filename: string) => {
-  const finalCode =
-    code +
-    "\n" +
-    `console.log(add(${(tests.add[0].params.a, tests.add[0].params.b)}}))`;
+  const finalCode = getFinalCode(code);
   fs.writeFileSync(`codeFiles/${filename}.js`, finalCode);
 
   exec(`node codeFiles/${filename}.js`, (error, stdout, stderr) => {
@@ -35,19 +43,20 @@ const executeCode = (code: string, filename: string) => {
       return;
     }
 
-    if (Number(stdout) == tests.add[0].result) {
-      const msg = {
-        jobStatus: "SUCCESS",
-        jobOutput: stdout,
-      };
-      redisClient.set(filename, JSON.stringify(msg));
-    } else {
-      const msg = {
-        jobStatus: "MISMATCHED",
-        jobOutput: stdout,
-      };
-      redisClient.set(filename, JSON.stringify(msg));
+    const results = stdout.split("\n");
+    let jobStatus = "SUCCESS";
+    for (let i = 0; i < tests.add.length; i++) {
+      if (tests.add[i].result !== Number(results[i])) {
+        jobStatus = "MISMATCHED";
+        break;
+      }
     }
+
+    const msg = {
+      jobStatus,
+      jobOutput: stdout,
+    };
+    redisClient.set(filename, JSON.stringify(msg));
 
     return;
   });
