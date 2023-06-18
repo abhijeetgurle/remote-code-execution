@@ -63,11 +63,19 @@ export default function Home() {
 
   const getMessageToDisplay = () => {
     if (jobStatus === "SUCCESS") {
-      return "Congratulations!!! Your code is running on all test cases";
+      return (
+        <span className={styles.success}>
+          Congratulations!!! Your code is running on all test cases
+        </span>
+      );
     } else if (jobStatus === "MISMATCHED") {
-      return "Test cases are failing! Please check your code";
+      return (
+        <span className={styles.error}>
+          Test cases are failing! Please check your code
+        </span>
+      );
     } else if (jobStatus === "PROCESSING") {
-      return "Code Is Running";
+      return <span>Code Is Running</span>;
     }
   };
 
