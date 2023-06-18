@@ -27,3 +27,11 @@
     justify-content: center;
     margin-top: 20px;
 }
+
+.error {
+    color: #ff4d4f
+}
+
+.success {
+    color: green
+}
