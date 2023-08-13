@@ -28,6 +28,6 @@
     "@types/uuid": "^9.0.1",
     "concurrently": "^7.6.0",
     "nodemon": "^2.0.22",
-    "typescript": "^5.0.2"
+    "typescript": "^5.1.6"
   }
 }
