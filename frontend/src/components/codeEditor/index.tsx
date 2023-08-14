@@ -33,7 +33,7 @@ const CodeEditor = (props: IProps) => {
 
   const runCodeClickHandler = () => {
     axios
-      .post("http://localhost:8000/code", {
+      .post("http://139.59.193.150:8000/code", {
         code,
         problemId,
       })
@@ -46,7 +46,7 @@ const CodeEditor = (props: IProps) => {
   useEffect(() => {
     if (jobId) {
       const interval = setInterval(() => {
-        axios.get(`http://localhost:8000/job/${jobId}`).then((res) => {
+        axios.get(`http://139.59.193.150:8000/job/${jobId}`).then((res) => {
           setJobStatus(res.data.data.jobStatus);
           if (res.data.data.jobStatus !== "PROCESSING") {
             clearInterval(interval);
