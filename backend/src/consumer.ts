@@ -7,19 +7,18 @@ import tests from "./tests";
 
 const queueName = "codeSubmitted";
 
-const getFinalCode = (code: string) => {
+const getFinalCode = (problemId: string, code: string) => {
   let finalCode = code;
 
-  for (const test of tests.add) {
-    finalCode +=
-      "\n" + `console.log(add(` + test.params.a + "," + test.params.b + "))";
+  for (const test of tests[problemId]) {
+    finalCode += "\n" + test.addLine;
   }
 
   return finalCode;
 };
 
-const executeCode = (code: string, filename: string) => {
-  const finalCode = getFinalCode(code);
+const executeCode = (problemId: string, code: string, filename: string) => {
+  const finalCode = getFinalCode(problemId, code);
   fs.writeFileSync(`codeFiles/${filename}.js`, finalCode);
 
   exec(`node codeFiles/${filename}.js`, (error, stdout, stderr) => {
@@ -45,8 +44,8 @@ const executeCode = (code: string, filename: string) => {
 
     const results = stdout.split("\n");
     let jobStatus = "SUCCESS";
-    for (let i = 0; i < tests.add.length; i++) {
-      if (tests.add[i].result !== Number(results[i])) {
+    for (let i = 0; i < tests[problemId].length; i++) {
+      if (tests[problemId][i].result !== Number(results[i])) {
         jobStatus = "MISMATCHED";
         break;
       }
@@ -78,7 +77,11 @@ async function connect() {
         };
         redisClient.set(parsedMessage.id, JSON.stringify(msg));
 
-        executeCode(parsedMessage.code, parsedMessage.id);
+        executeCode(
+          parsedMessage.problemId,
+          parsedMessage.code,
+          parsedMessage.id
+        );
         channel.ack(message);
       }
     });

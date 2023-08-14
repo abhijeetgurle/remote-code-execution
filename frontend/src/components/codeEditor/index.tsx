@@ -26,6 +26,9 @@ const CodeEditor = (props: IProps) => {
 
   useEffect(() => {
     setCode(baseCode);
+    setOutput("");
+    setJobId("");
+    setJobStatus("");
   }, [baseCode]);
 
   const runCodeClickHandler = () => {
@@ -69,6 +72,10 @@ const CodeEditor = (props: IProps) => {
       );
     } else if (jobStatus === "PROCESSING") {
       return <span>Code Is Running</span>;
+    } else if (jobStatus === "ERROR") {
+      return (
+        <span className={styles.error}>Error while compiling the code!!!</span>
+      );
     }
   };
 
