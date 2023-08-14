@@ -14,42 +14,46 @@ There are some great implmentations on Github for running code in different prog
 
 I have built this project as web application & it is hoted on [link](https://rce-platform.herokuapp.com/). Thanks to Nodejs & Nextjs.
 
+## Architecture
+
+[](https://drive.google.com/file/d/1L9SGTixnTjsIrct49xxcHoKD9FT7ZHrF/view?usp=sharing)
+
 ## How to run locally
 
 - Clone the repo
 
-### Run Frontend
+- Run Frontend
 
-```
-$ cd frontend
-$ npm install
-$ npm run dev
-```
+  ```
+  $ cd frontend
+  $ npm install
+  $ npm run dev
+  ```
 
-### Run redis inside docker
+- Run redis inside docker
 
-```
-$ docker run --name my-redis -p 6379:6379 redis
-```
+  ```
+  $ docker run --name my-redis -p 6379:6379 redis
+  ```
 
-### Run rabbitmq inside docker
+- Run rabbitmq inside docker
 
-```
-$ docker run --rm -it -p 15672:15672 -p 5672:5672 rabbitmq:3-management
-```
+  ```
+  $ docker run --rm -it -p 15672:15672 -p 5672:5672 rabbitmq:3-management
+  ```
 
 - Create folder `codeFiles` inside `backend` folder.
 
-### Run Backend
+- Run Backend
 
-```
-$ cd backend
-$ npm install
-$ npm run dev
-```
+  ```
+  $ cd backend
+  $ npm install
+  $ npm run dev
+  ```
 
-### Run Consumer
+- Run Consumer
 
-```
-$ npx ts-node src/consumer.ts
-```
+  ```
+  $ npx ts-node src/consumer.ts
+  ```
