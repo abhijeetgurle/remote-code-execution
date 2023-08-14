@@ -26,11 +26,12 @@ app.get("/", (req: Request, res: Response) => {
 
 app.post("/code", async (req: Request, res: Response) => {
   try {
-    const code = req.body.code;
+    const { code, problemId } = req.body;
     const id = uuidv4();
     const message = {
       id,
       code,
+      problemId,
     };
 
     channel.sendToQueue(queueName, Buffer.from(JSON.stringify(message)));
