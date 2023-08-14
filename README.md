@@ -16,7 +16,7 @@ I have built this project as web application & it is hoted on [link](https://rce
 
 ## Architecture
 
-[](https://drive.google.com/file/d/1L9SGTixnTjsIrct49xxcHoKD9FT7ZHrF/view?usp=sharing)
+![](./RCE.drawio.png)
 
 ## How to run locally
 
