@@ -1,30 +1,14 @@
 import { CodeOutlined } from "@ant-design/icons";
 import { Layout, Menu, Button, theme } from "antd";
 import styles from "@/styles/Home.module.css";
-import { Tabs } from "antd";
-import { TabsProps } from "antd";
 import CodeEditor from "../codeEditor";
+import { programs } from "@/utils/constant";
+import { useState } from "react";
 
-const { Header, Content, Footer, Sider } = Layout;
-
-const items: TabsProps["items"] = [
-  {
-    key: "1",
-    label: `Problem Statement`,
-    children: (
-      <div>
-        <h3>Add 2 Numbers</h3>
-        <div>
-          Write a code for adding 2 integer numbers. Complete the add function
-          given. The function accepts 2 parameters a & b as input & expects
-          their addition as the returned response.
-        </div>
-      </div>
-    ),
-  },
-];
+const { Content, Sider } = Layout;
 
 const Sidebar = () => {
+  const [selectedTab, setSelectedTab] = useState<number>(1);
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -49,6 +33,7 @@ const Sidebar = () => {
               label: "Factorial of a Number",
             },
           ]}
+          onClick={(e) => setSelectedTab(Number(e.key))}
         />
       </Sider>
       <Layout>
@@ -62,9 +47,15 @@ const Sidebar = () => {
         >
           <div className={styles.main}>
             <div className={styles.problem}>
-              <Tabs defaultActiveKey="1" items={items} />
+              <div>
+                <h3>{programs[selectedTab - 1].title}</h3>
+                <div>{programs[selectedTab - 1].problem}</div>
+              </div>
             </div>
-            <CodeEditor />
+            <CodeEditor
+              problemId={programs[selectedTab - 1].id}
+              baseCode={programs[selectedTab - 1].baseCode}
+            />
           </div>
         </Content>
       </Layout>

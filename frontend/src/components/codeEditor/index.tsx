@@ -11,19 +11,28 @@ import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism.css";
 
-const CodeEditor = () => {
-  const [code, setCode] = useState(
-    `function add(a, b) {\n // Write your code here... \n\n}`
-  );
+interface IProps {
+  problemId: string;
+  baseCode: string;
+}
+
+const CodeEditor = (props: IProps) => {
+  const { problemId, baseCode } = props;
+  const [code, setCode] = useState(baseCode);
 
   const [output, setOutput] = useState("");
   const [jobId, setJobId] = useState("");
   const [jobStatus, setJobStatus] = useState("");
 
+  useEffect(() => {
+    setCode(baseCode);
+  }, [baseCode]);
+
   const runCodeClickHandler = () => {
     axios
       .post("http://localhost:8000/code", {
-        code: code,
+        code,
+        problemId,
       })
       .then((res) => {
         setJobId(res.data.data.jobId);
