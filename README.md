@@ -12,7 +12,7 @@ There are some great implmentations on Github for running code in different prog
 
 ## How to use
 
-I have built this project as web application & it is hoted on [link](https://rce-platform.herokuapp.com/). Thanks to Nodejs & Nextjs.
+I have built this project as web application & it is hoted on [link](http://139.59.193.150:3000/). Thanks to [Digital Ocean](https://www.digitalocean.com/).
 
 ## Architecture
 
